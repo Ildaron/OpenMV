@@ -90,19 +90,9 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_SDMMC1_SD_Init();
@@ -110,59 +100,35 @@ int main(void)
   MX_USART3_UART_Init();
   MX_I2C4_Init();
   MX_TIM1_Init();
-  /* USER CODE BEGIN 2 */
 
-  /* USER CODE END 2 */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  //uint16_t adress_read = 0x43;
   uint16_t adress_read1 = 0x44;
   uint16_t  status = 0x1D;
   uint8_t  status_readed= 0xFF;
   uint8_t  status_readed1;
 
- // HAL_GPIO_WritePin(GPIOA, DCMI_RST_Pin, GPIO_PIN_SET);
-//  HAL_Delay(100);
 
   HAL_TIM_Base_Start_IT(&htim1);
   uint8_t a = 1;
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_SET);
- // HAL_Delay(1000);
- // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_RESET);
-//  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-
- //  send_data_by_uart(a);
-//
-
-
-
-  uint8_t aRxBuffer[512];
+ // HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_SET);
 
   while (1)
   {
-    /* USER CODE END WHILE */
 
-//	  HAL_I2C_Mem_Read(&hi2c4, adress_read1, &status, 1, (int8_t*)&status_readed, 1, 100);
-	        HAL_I2C_Master_Transmit(&hi2c4, 0x43, &status, 1, 100);  // send register adress for reading 
+	        HAL_I2C_Master_Transmit(&hi2c4, 0x43, &status, 1, 100);
+	        HAL_I2C_Master_Receive(&hi2c4, 0x43, &status_readed1, 2, 10);
 
-	        HAL_I2C_Master_Receive(&hi2c4, 0x43, &status_readed1, 2, 10);  // read register 
+	  	    send_data_by_uart(status_readed1);
+	  	    HAL_Delay (10);
 
-	  	   send_data_by_uart(status_readed1);
-	  	   HAL_Delay (10);
-    /* USER CODE BEGIN 3 */
-    /* USER CODE BEGIN 3 */
   }
-  /* USER CODE END 3 */
+
 
 
 }
 
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+
 
 
 void send_data_by_uart (received_byte)
